@@ -1,8 +1,12 @@
 import aj from "../lib/arcjet.js";
-import { isSpoofedBot } from "@arcjet/inspect";
 
 export const arcjetProtection = async (req, res, next) => {
+
   if (req.method === "OPTIONS") {
+    return next();
+  }
+
+  if (req.path.startsWith("/api/auth")) {
     return next();
   }
 
@@ -21,7 +25,7 @@ export const arcjetProtection = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log("Arcjet Protection Error:", error);
+    console.error("Arcjet error:", error);
     next();
   }
 };
