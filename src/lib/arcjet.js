@@ -10,8 +10,7 @@ const aj = arcjet({
       mode: "LIVE", 
       allow: [
         "CATEGORY:SEARCH_ENGINE", 
-        "https://frontend-peanuts-ping.vercel.app"
-
+        
       ],
     }),
     slidingWindow({
