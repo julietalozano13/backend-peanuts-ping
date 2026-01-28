@@ -4,7 +4,8 @@ import { ENV } from "../lib/env.js";
 
 export const socketAuthMiddleware = async (socket, next) => {
   try {
-    const token = socket.handshake.headers.cookie
+    const token = req.cookies.token;
+
       ?.split("; ")
       .find((row) => row.startsWith("jwt="))
       ?.split("=")[1];
