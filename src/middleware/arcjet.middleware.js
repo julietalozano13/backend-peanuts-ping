@@ -1,27 +1,17 @@
-import aj from "../lib/arcjet.js";
-import { isSpoofedBot } from "@arcjet/inspect";
+import arcjet, { shield, detectBot } from "@arcjet/node";
 
-export const arcjetProtection = async (req, res, next) => {
-  if (req.method === "OPTIONS") {
-    return next();
-  }
+const aj = arcjet({
+  key: process.env.ARCJET_KEY,
+  rules: [
+    shield({
+      allow: [
+        "https://frontend-peanuts-ping.vercel.app"
+      ],
+    }),
+    detectBot({
+      mode: "LIVE",
+    }),
+  ],
+});
 
-  try {
-    const decision = await aj.protect(req);
-
-    if (decision.isDenied()) {
-      if (decision.reason.isRateLimit()) {
-        return res.status(429).json({ message: "Rate limit exceeded." });
-      }
-
-      return res.status(403).json({
-        message: "Access denied by security policy.",
-      });
-    }
-
-    next();
-  } catch (error) {
-    console.log("Arcjet Protection Error:", error);
-    next();
-  }
-};
+export default aj;
