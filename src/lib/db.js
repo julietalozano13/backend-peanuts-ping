@@ -1,17 +1,29 @@
 import mongoose from "mongoose";
 import { ENV } from "./env.js";
 
-export const connectDB = async () => {
-  try {
-    const { MONGO_URI } = ENV;
-    if (!MONGO_URI) {
-      throw new Error("MONGO_URI is not set");
-    }
+let cached = global.mongoose;
 
-    const conn = await mongoose.connect(MONGO_URI);
-    console.log("MONGODB CONNECTED:", conn.connection.host);
-  } catch (error) {
-    console.error("MongoDB connection error:", error.message);
-    throw error; 
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+export const connectDB = async () => {
+  if (cached.conn) {
+    return cached.conn;
   }
+
+  if (!ENV.MONGO_URI) {
+    throw new Error("MONGO_URI is not set");
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(ENV.MONGO_URI, {
+      bufferCommands: false, 
+    });
+  }
+
+  cached.conn = await cached.promise;
+  console.log("✅ MongoDB connected");
+
+  return cached.conn;
 };
