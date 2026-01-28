@@ -1,21 +1,25 @@
 import arcjet, { shield, detectBot, slidingWindow } from "@arcjet/node";
-
 import { ENV } from "./env.js";
 
 const aj = arcjet({
   key: ENV.ARCJET_KEY,
+
   rules: [
-    shield({ mode: "LIVE" }),
+    shield({
+      mode: "LIVE",
+    }),
+
     detectBot({
-      mode: "LIVE", 
+      mode: "LIVE",
       allow: [
-        "CATEGORY:SEARCH_ENGINE", 
-        
+        "CATEGORY:SEARCH_ENGINE",
+        "CATEGORY:KNOWN_BROWSER", 
       ],
     }),
+
     slidingWindow({
       mode: "LIVE",
-      max: 100,
+      max: 200,     
       interval: 60,
     }),
   ],
